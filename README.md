@@ -24,7 +24,12 @@
     那么多年的好。鉴于自己对Yii比较熟，也偏好于Yii的注入方法。因此选择了对Yii进行改造。
     
     希望这个小东西能帮到你，也希望你能发现其中的Bug,我们一起完善它。也算为IT人做一点微薄的贡献。
-    
+##  安装：
+ composer安装
+``` code
+    composer require duanlujian/servicelocator
+```
+
 ##  项目结构：
     di--|
         |base---|
