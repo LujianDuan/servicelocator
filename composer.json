@@ -1,6 +1,6 @@
 {
-    "name": "duanlujian/di",
-    "description": "A DI compontent which extract from Yii2.0 for every project.once you work on a broken old code,and you can't change it.di container is your best choose!",
+    "name": "duanlujian/servicelocator",
+    "description": "A servicelocator compontent which extract from Yii2.0 for every project.once you work on a broken old code,and you can't change it.di container is your best choose!",
     "license": "Apache2.0",
     "authors": [
         {
