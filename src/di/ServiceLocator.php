@@ -51,11 +51,11 @@ class ServiceLocator extends Component
     /**
      * @var array shared component instances indexed by their IDs
      */
-    private $_components = [];
+    public static $_components = [];
     /**
      * @var array component definitions indexed by their IDs
      */
-    private $_definitions = [];
+    public static $_definitions = [];
 
 
     /**
@@ -66,8 +66,8 @@ class ServiceLocator extends Component
      */
     public function __get($name)
     {
-        if ($this->has($name)) {
-            return $this->get($name);
+        if (self::has($name)) {
+            return self::get($name);
         } else {
             return parent::__get($name);
         }
@@ -81,7 +81,7 @@ class ServiceLocator extends Component
      */
     public function __isset($name)
     {
-        if ($this->has($name, true)) {
+        if (self::has($name, true)) {
             return true;
         } else {
             return parent::__isset($name);
@@ -102,9 +102,9 @@ class ServiceLocator extends Component
      * @return boolean whether the locator has the specified component definition or has instantiated the component.
      * @see set()
      */
-    public function has($id, $checkInstance = false)
+    static public function has($id, $checkInstance = false)
     {
-        return $checkInstance ? isset($this->_components[$id]) : isset($this->_definitions[$id]);
+        return $checkInstance ? isset(self::$_components[$id]) : isset(self::$_definitions[$id]);
     }
 
     /**
@@ -118,18 +118,18 @@ class ServiceLocator extends Component
      * @see has()
      * @see set()
      */
-    public function get($id, $throwException = true)
+    static public function get($id, $throwException = true)
     {
-        if (isset($this->_components[$id])) {
-            return $this->_components[$id];
+        if (isset(self::$_components[$id])) {
+            return self::$_components[$id];
         }
 
-        if (isset($this->_definitions[$id])) {
-            $definition = $this->_definitions[$id];
+        if (isset(self::$_definitions[$id])) {
+            $definition = self::$_definitions[$id];
             if (is_object($definition) && !$definition instanceof Closure) {
-                return $this->_components[$id] = $definition;
+                return self::$_components[$id] = $definition;
             } else {
-                return $this->_components[$id] = Base::createObject($definition);
+                return self::$_components[$id] = Base::createObject($definition);
             }
         } elseif ($throwException) {
             throw new \Exception("Unknown component ID: $id");
@@ -181,22 +181,22 @@ class ServiceLocator extends Component
      *
      * @throws InvalidConfigException if the definition is an invalid configuration array
      */
-    public function set($id, $definition)
+    static public function set($id, $definition)
     {
         if ($definition === null) {
-            unset($this->_components[$id], $this->_definitions[$id]);
+            unset(self::$_components[$id], self::$_definitions[$id]);
             return;
         }
 
-        unset($this->_components[$id]);
+        unset(self::$_components[$id]);
 
         if (is_object($definition) || is_callable($definition, true)) {
             // an object, a class name, or a PHP callable
-            $this->_definitions[$id] = $definition;
+            self::$_definitions[$id] = $definition;
         } elseif (is_array($definition)) {
             // a configuration array
             if (isset($definition['class'])) {
-                $this->_definitions[$id] = $definition;
+                self::$_definitions[$id] = $definition;
             } else {
                 throw new \Exception("The configuration for the \"$id\" component must contain a \"class\" element.");
             }
@@ -209,9 +209,9 @@ class ServiceLocator extends Component
      * Removes the component from the locator.
      * @param string $id the component ID
      */
-    public function clear($id)
+    static public function clear($id)
     {
-        unset($this->_definitions[$id], $this->_components[$id]);
+        unset(self::$_definitions[$id], self::$_components[$id]);
     }
 
     /**
@@ -219,9 +219,9 @@ class ServiceLocator extends Component
      * @param boolean $returnDefinitions whether to return component definitions instead of the loaded component instances.
      * @return array the list of the component definitions or the loaded component instances (ID => definition or instance).
      */
-    public function getComponents($returnDefinitions = true)
+    static public function getComponents($returnDefinitions = true)
     {
-        return $returnDefinitions ? $this->_definitions : $this->_components;
+        return $returnDefinitions ? self::$_definitions : self::$_components;
     }
 
     /**
@@ -251,10 +251,10 @@ class ServiceLocator extends Component
      *
      * @param array $components component definitions or instances
      */
-    public function setComponents($components)
+    static public function setComponents($components)
     {
         foreach ($components as $id => $component) {
-            $this->set($id, $component);
+            self::set($id, $component);
         }
     }
 }
